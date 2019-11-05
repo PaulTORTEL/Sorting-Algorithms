@@ -1,0 +1,15 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb", "prettier"],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "func-names": "off",
+    "react/destructuring-assignment": ["off"],
+    "no-param-reassign": ["off", { "props": true }]
+  }
+}
