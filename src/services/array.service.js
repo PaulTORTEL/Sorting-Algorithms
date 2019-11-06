@@ -89,24 +89,46 @@ class ArrayService {
     }
     const arrayToWork = arrayToSort.slice();
 
-    /* TODO */
+    this.splitMerge(arrayToWork, arrayToSort, 0, arrayToWork.length);
 
-    return arrayToSort;
+    return arrayToWork;
   }
 
-  static splitMerge(arrayToWork, lowerBound, upperBound) {
-    if (upperBound - lowerBound === 0) {
+  static splitMerge(arrayToWork, arrayToSort, lowerBound, upperBound) {
+    if (upperBound - lowerBound <= 1) {
       return;
     }
     const middleBound = Math.floor((upperBound + lowerBound) / 2);
 
-    this.splitMerge(arrayToWork, lowerBound, middleBound);
-    this.splitMerge(arrayToWork, middleBound + 1, upperBound);
+    this.splitMerge(arrayToSort, arrayToWork, lowerBound, middleBound);
+    this.splitMerge(arrayToSort, arrayToWork, middleBound, upperBound);
 
-    this.doMerge(arrayToWork, lowerBound, middleBound, upperBound);
+    this.doMerge(arrayToSort, arrayToWork, lowerBound, middleBound, upperBound);
   }
 
-  static doMerge(arrayToWork, lowerBound, middleBound, upperBound) {}
+  static doMerge(
+    arrayToWork,
+    arrayToSort,
+    lowerBound,
+    middleBound,
+    upperBound
+  ) {
+    let left = lowerBound;
+    let right = middleBound;
+
+    for (let i = lowerBound; i < upperBound; i += 1) {
+      if (
+        left < middleBound &&
+        (right >= upperBound || arrayToWork[left] <= arrayToWork[right])
+      ) {
+        arrayToSort[i] = arrayToWork[left];
+        left += 1;
+      } else {
+        arrayToSort[i] = arrayToWork[right];
+        right += 1;
+      }
+    }
+  }
 }
 
 export default ArrayService;

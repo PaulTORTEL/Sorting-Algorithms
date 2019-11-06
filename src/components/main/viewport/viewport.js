@@ -26,7 +26,8 @@ class Viewport extends Component {
 
   handleClickSort = () => {
     const { arrayToSort } = this.state;
-    const sortedArray = ArrayService.quickSort(arrayToSort);
+    const sortedArray = ArrayService.mergeSort(arrayToSort);
+    console.log(sortedArray);
     this.setState({ sortedArray });
   };
 
