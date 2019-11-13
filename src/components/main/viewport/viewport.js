@@ -13,8 +13,13 @@ class Viewport extends Component {
       maxValue: -1,
       sortedArray: [],
       nbOfItems: 3,
-      highlightedItems: [],
-      speed: 250
+      highlightedItems: {},
+      speed: 100,
+      colors: {
+        fixedColor: 'purple',
+        analyzedColor: 'green',
+        default: 'black'
+      }
     };
     this.options = [
       { key: 'bubble', text: 'Bubble sort', value: 'bubble' },
@@ -32,33 +37,25 @@ class Viewport extends Component {
   };
 
   extractBubblyResult = async resultSteps => {
-    const fixedColor = 'purple';
-    const analyzedColor = 'green';
-    let firstFixedItemIndex = -1;
+    let fixedLower = -1;
+    let fixedUpper = -1;
 
     for (const step of resultSteps) {
-      const highlightedItems = [];
+      const highlightedItems = {};
 
-      // TODO: big refacto needed to
-      step.item1.color = analyzedColor;
-      step.item2.color = analyzedColor;
-
-      if (step.item1.isFixed) {
-        firstFixedItemIndex = step.item1.index;
-      } else if (step.item2.isFixed) {
-        firstFixedItemIndex = step.item2.index;
-      }
-
-      highlightedItems.push(step.item1, step.item2);
-
-      if (firstFixedItemIndex > -1) {
-        for (let i = firstFixedItemIndex; i < step.currArray.length; i += 1) {
-          highlightedItems.push({
-            index: i,
-            color: fixedColor
-          });
+      if (step.item2.isFixed) {
+        fixedLower = step.item2.index;
+        if (fixedUpper === -1) {
+          fixedUpper = fixedLower;
         }
       }
+
+      if (fixedLower !== -1) {
+        highlightedItems.fixedLower = fixedLower;
+        highlightedItems.fixedUpper = fixedUpper;
+      }
+
+      highlightedItems.analyzed = [step.item1, step.item2];
 
       this.setState({
         sortedArray: step.currArray,
@@ -66,14 +63,12 @@ class Viewport extends Component {
       });
       await this.sleep(this.state.speed);
     }
+    const { length } = this.state.sortedArray;
+    const highlightedItems = {
+      fixedLower: 0,
+      fixedUpper: length - 1
+    };
 
-    const highlightedItems = [];
-    for (let i = 0; i < resultSteps.length; i += 1) {
-      highlightedItems.push({
-        index: i,
-        color: fixedColor
-      });
-    }
     this.setState({
       highlightedItems
     });
@@ -111,7 +106,7 @@ class Viewport extends Component {
       arrayToSort: generatedArray,
       maxValue,
       sortedArray: [],
-      highlightedItems: []
+      highlightedItems: {}
     });
   };
 
@@ -129,6 +124,7 @@ class Viewport extends Component {
       arrayToSort,
       nbOfItems,
       highlightedItems,
+      colors,
       speed
     } = this.state;
     const arrayToDisplay = sortedArray.length > 0 ? sortedArray : arrayToSort;
@@ -156,7 +152,7 @@ class Viewport extends Component {
         <input
           type="range"
           min={1}
-          max={1000}
+          max={500}
           value={speed}
           onChange={this.handleChangeSpeed}
         />
@@ -164,6 +160,7 @@ class Viewport extends Component {
           arrayToDisplay={arrayToDisplay}
           maxValue={this.state.maxValue}
           highlightedItems={highlightedItems}
+          colors={colors}
         />
       </Container>
     );
