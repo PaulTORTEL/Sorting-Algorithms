@@ -13,7 +13,7 @@ function Navbar() {
       color="blue"
     >
       <Header as="h1">Sorting algorithms App</Header>
-      <p>© Paul Tortel</p>
+      <p>Paul Tortel</p>
     </Segment>
   );
 }

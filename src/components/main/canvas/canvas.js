@@ -3,26 +3,21 @@ import './canvas.css';
 
 function Canvas(props) {
   const nbOfItems = props.arrayToDisplay.length;
-  const maxValue = props.maxValue;
+  const { maxValue, highlightedItems } = props;
 
   const arrayToDisplay = props.arrayToDisplay.map((element, i) => {
+    const item = highlightedItems.find(el => {
+      return el.index === i;
+    });
+
     const itemStyle = {
-      width: 800 / nbOfItems - 5 + 'px',
-      height: (element * /*this.calcHeight()*/ 500) / maxValue,
-      backgroundColor: 'black'
+      width: `${800 / nbOfItems - 5}px`,
+      height: (element * /* this.calcHeight() */ 500) / maxValue,
+      backgroundColor: item ? item.color : 'black'
     };
 
-    return <div style={itemStyle} key={i}></div>;
+    return <div style={itemStyle} key={i} />;
   });
-
-  if (arrayToDisplay.length > 0) {
-    const itemStyle = {
-      width: 800 / nbOfItems - 5 + 'px',
-      height: arrayToDisplay[2].props.style.height,
-      backgroundColor: 'blue'
-    };
-    arrayToDisplay[2] = <div key={2} style={itemStyle}></div>;
-  }
 
   return <div id="canvas">{arrayToDisplay}</div>;
 }

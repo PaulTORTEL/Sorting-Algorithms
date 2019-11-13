@@ -16,6 +16,8 @@ class ArrayService {
     const sortedArray = arrayToSort.slice();
     let threshold = sortedArray.length;
 
+    const resultSteps = [];
+
     while (threshold > 1) {
       let newThreshold = 0;
 
@@ -27,11 +29,23 @@ class ArrayService {
           ];
           newThreshold = i;
         }
+
+        resultSteps.push({
+          item1: {
+            index: i - 1,
+            isFixed: false
+          },
+          item2: {
+            index: i,
+            isFixed: i + 1 === threshold && newThreshold !== threshold
+          },
+          currArray: sortedArray.slice()
+        });
       }
 
       threshold = newThreshold;
     }
-    return sortedArray;
+    return resultSteps;
   }
 
   static quickSort(arrayToSort) {
@@ -100,9 +114,11 @@ class ArrayService {
     }
     const middleBound = Math.floor((upperBound + lowerBound) / 2);
 
+    // Modifies and sorts arrayToSort
     this.splitMerge(arrayToSort, arrayToWork, lowerBound, middleBound);
     this.splitMerge(arrayToSort, arrayToWork, middleBound, upperBound);
 
+    // Rewrite arrayToWork
     this.doMerge(arrayToSort, arrayToWork, lowerBound, middleBound, upperBound);
   }
 
