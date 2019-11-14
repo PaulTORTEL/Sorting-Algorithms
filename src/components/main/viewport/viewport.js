@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './viewport.css';
-import { Container, Select, Button } from 'semantic-ui-react';
+import { Button, Container, Select } from 'semantic-ui-react';
 import ArrayService from '../../../services/array.service';
 import Canvas from '../canvas/canvas';
+import './viewport.css';
 
 class Viewport extends Component {
   constructor(props) {
@@ -16,8 +16,8 @@ class Viewport extends Component {
       highlightedItems: {},
       speed: 100,
       colors: {
-        fixedColor: 'purple',
-        analyzedColor: 'green',
+        fixedColor: '#2ecc71',
+        analyzedColor: '#1abc9c',
         default: 'black'
       }
     };
@@ -74,6 +74,31 @@ class Viewport extends Component {
     });
   };
 
+  extractMergeResult = async resultSteps => {
+    for (const step of resultSteps) {
+      const highlightedItems = {};
+
+      highlightedItems.analyzed = [step.item1, step.item2];
+      highlightedItems.fixedLower = -1;
+      highlightedItems.fixedUpper = -1;
+
+      this.setState({
+        sortedArray: step.currArray,
+        highlightedItems
+      });
+      await this.sleep(this.state.speed);
+    }
+    const { length } = this.state.sortedArray;
+    const highlightedItems = {
+      fixedLower: 0,
+      fixedUpper: length - 1
+    };
+
+    this.setState({
+      highlightedItems
+    });
+  };
+
   handleClickSort = () => {
     const { arrayToSort } = this.state;
 
@@ -86,12 +111,15 @@ class Viewport extends Component {
         break;
       case 'merge':
         resultSteps = ArrayService.mergeSort(arrayToSort);
+        this.extractMergeResult(resultSteps);
         break;
       case 'quick':
         resultSteps = ArrayService.quickSort(arrayToSort);
+        this.extractMergeResult(resultSteps);
         break;
       default:
         resultSteps = ArrayService.mergeSort(arrayToSort);
+        this.extractMergeResult(resultSteps);
         break;
     }
   };
@@ -131,26 +159,26 @@ class Viewport extends Component {
     return (
       <Container>
         <input
-          type="range"
+          type='range'
           min={3}
           max={100}
           value={nbOfItems}
           onChange={this.handleChangeRange}
         />
-        <Button className="blue" onClick={this.handleClickNewArray}>
+        <Button className='blue' onClick={this.handleClickNewArray}>
           New array
         </Button>
         <Select
           options={this.options}
-          placeholder="Select the algorithm"
+          placeholder='Select the algorithm'
           onChange={this.handleChangeAlgo}
           value={this.state.algorithm}
         />
-        <Button className="green" onClick={this.handleClickSort}>
+        <Button className='green' onClick={this.handleClickSort}>
           Sort
         </Button>
         <input
-          type="range"
+          type='range'
           min={1}
           max={500}
           value={speed}

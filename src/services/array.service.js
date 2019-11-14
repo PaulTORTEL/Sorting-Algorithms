@@ -50,32 +50,39 @@ class ArrayService {
 
   static quickSort(arrayToSort) {
     if (!arrayToSort || arrayToSort.length === 0 || arrayToSort.length === 1) {
-      return arrayToSort;
+      return { currArray: arrayToSort.slice() };
     }
-
-    return this.doQuickSort(arrayToSort.slice(), 0, arrayToSort.length - 1);
+    const resultSteps = [];
+    this.doQuickSort(
+      arrayToSort.slice(),
+      0,
+      arrayToSort.length - 1,
+      resultSteps
+    );
+    return resultSteps;
   }
 
-  static doQuickSort(arrayToSort, lowerBound, upperBound) {
+  static doQuickSort(arrayToSort, lowerBound, upperBound, resultSteps) {
     if (lowerBound < upperBound) {
       const middleBound = this.doPartitioning(
         arrayToSort,
         lowerBound,
-        upperBound
+        upperBound,
+        resultSteps
       );
-      this.doQuickSort(arrayToSort, lowerBound, middleBound);
-      this.doQuickSort(arrayToSort, middleBound + 1, upperBound);
+      this.doQuickSort(arrayToSort, lowerBound, middleBound, resultSteps);
+      this.doQuickSort(arrayToSort, middleBound + 1, upperBound, resultSteps);
     }
-    return arrayToSort;
   }
 
-  static doPartitioning(arrayToSort, lowerBound, upperBound) {
+  static doPartitioning(arrayToSort, lowerBound, upperBound, resultSteps) {
     const pivot =
       arrayToSort[lowerBound + Math.floor((upperBound - lowerBound) / 2)];
     let leftIndex = lowerBound;
     let rightIndex = upperBound;
 
     while (1) {
+      const step = {};
       while (arrayToSort[leftIndex] < pivot) {
         leftIndex += 1;
       }
@@ -84,7 +91,18 @@ class ArrayService {
         rightIndex -= 1;
       }
 
+      step.item1 = {
+        index: leftIndex,
+        isFixed: false
+      };
+      step.item2 = {
+        index: rightIndex,
+        isFixed: false
+      };
+
       if (leftIndex >= rightIndex) {
+        step.currArray = arrayToSort.slice();
+        resultSteps.push(step);
         return rightIndex;
       }
 
@@ -92,6 +110,8 @@ class ArrayService {
         arrayToSort[rightIndex],
         arrayToSort[leftIndex]
       ];
+      step.currArray = arrayToSort.slice();
+      resultSteps.push(step);
       leftIndex += 1;
       rightIndex -= 1;
     }
