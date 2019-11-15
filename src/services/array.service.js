@@ -122,24 +122,55 @@ class ArrayService {
       return arrayToSort;
     }
     const arrayToWork = arrayToSort.slice();
+    const resultSteps = [];
+    this.splitMerge(
+      arrayToWork,
+      arrayToSort,
+      0,
+      arrayToWork.length,
+      resultSteps
+    );
 
-    this.splitMerge(arrayToWork, arrayToSort, 0, arrayToWork.length);
-
-    return arrayToWork;
+    return resultSteps;
   }
 
-  static splitMerge(arrayToWork, arrayToSort, lowerBound, upperBound) {
+  static splitMerge(
+    arrayToWork,
+    arrayToSort,
+    lowerBound,
+    upperBound,
+    resultSteps
+  ) {
     if (upperBound - lowerBound <= 1) {
       return;
     }
     const middleBound = Math.floor((upperBound + lowerBound) / 2);
 
     // Modifies and sorts arrayToSort
-    this.splitMerge(arrayToSort, arrayToWork, lowerBound, middleBound);
-    this.splitMerge(arrayToSort, arrayToWork, middleBound, upperBound);
+    this.splitMerge(
+      arrayToSort,
+      arrayToWork,
+      lowerBound,
+      middleBound,
+      resultSteps
+    );
+    this.splitMerge(
+      arrayToSort,
+      arrayToWork,
+      middleBound,
+      upperBound,
+      resultSteps
+    );
 
     // Rewrite arrayToWork
-    this.doMerge(arrayToSort, arrayToWork, lowerBound, middleBound, upperBound);
+    this.doMerge(
+      arrayToSort,
+      arrayToWork,
+      lowerBound,
+      middleBound,
+      upperBound,
+      resultSteps
+    );
   }
 
   static doMerge(
@@ -147,12 +178,24 @@ class ArrayService {
     arrayToSort,
     lowerBound,
     middleBound,
-    upperBound
+    upperBound,
+    resultSteps
   ) {
     let left = lowerBound;
     let right = middleBound;
 
     for (let i = lowerBound; i < upperBound; i += 1) {
+      const step = {
+        item1: {
+          index: left,
+          isFixed: false
+        },
+        item2: {
+          index: right,
+          isFixed: false
+        }
+      };
+
       if (
         left < middleBound &&
         (right >= upperBound || arrayToWork[left] <= arrayToWork[right])
@@ -163,6 +206,8 @@ class ArrayService {
         arrayToSort[i] = arrayToWork[right];
         right += 1;
       }
+      step.currArray = arrayToSort.slice();
+      resultSteps.push(step);
     }
   }
 }
