@@ -125,7 +125,7 @@ class ArrayService {
     const resultSteps = [];
     this.splitMerge(
       arrayToWork,
-      arrayToSort,
+      arrayToSort.slice(),
       0,
       arrayToWork.length,
       resultSteps
